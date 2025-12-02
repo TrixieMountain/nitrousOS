@@ -1,19 +1,20 @@
-# flake.nix
+# /etc/nixos/flake.nix
 {
-  description = "nitrousOS-experimental";
+  description = "nitrousOS";
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-  };
+inputs = {
+  nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+};
 
-  outputs = { self, nixpkgs }: {
+  outputs = { self, nixpkgs, home-manager }: {
     nixosConfigurations = {
-      nitrousOS-experimental = nixpkgs.lib.nixosSystem {
+      nitrousOS = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./configuration.nix
+          ./lib/system/nitrousOS/default.nix
         ];
       };
     };
   };
 }
+

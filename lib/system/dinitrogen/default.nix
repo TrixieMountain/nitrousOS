@@ -27,7 +27,7 @@ in
 
   # Import the hardware configuration file
   imports =
-    [ ../../../oem/hardware-configuration.nix ];
+    [ ../../set/hardware-configuration.nix ];
 
   # Enable experimental features for Nix
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

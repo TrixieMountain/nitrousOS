@@ -1,5 +1,12 @@
 { config, pkgs, ... }:
 
+  # Import the hardware configuration file
+  imports =
+    [ 
+      ./oem/hardware/hardware-configuration.nix 
+      ./oem/nvidia-laptop-lenovo-p14s.nix
+    ];
+
 let
   # List of GNOME packages to retain
   gnomePackages = [

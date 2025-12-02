@@ -1,0 +1,20 @@
+# Build artifacts
+result
+result-*
+build/
+.cache/
+
+# VM images and locks
+*.qcow2
+flake.lock
+
+# Editor files
+.vscode/
+.idea/
+*~
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

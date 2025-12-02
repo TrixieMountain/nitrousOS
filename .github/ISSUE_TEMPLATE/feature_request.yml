@@ -1,0 +1,55 @@
+name: Feature Request
+description: Suggest a new feature for NitrousOS
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your feature suggestion!
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem description
+      description: What problem would this feature solve?
+      placeholder: "I'm frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like to happen?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature category
+      description: What area does this feature relate to?
+      options:
+        - System configuration
+        - Plugin architecture
+        - Build system
+        - Documentation
+        - Tooling
+        - Security
+        - Performance
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative solutions
+      description: Any alternative solutions you've considered?
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other context or screenshots about the feature request

@@ -3,6 +3,7 @@ result
 result-*
 build/
 .cache/
+dist/
 
 # VM images and locks
 *.qcow2

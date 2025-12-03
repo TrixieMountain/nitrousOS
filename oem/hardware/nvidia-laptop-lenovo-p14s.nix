@@ -1,10 +1,9 @@
+# oem/hardware/nvidia-laptop-lenovo-p14s.nix
+# Lenovo ThinkPad P14s NVIDIA hardware configuration
 { config, lib, pkgs, ... }:
-{
-  imports = [
-    ./dynamic-gpu.nix
-  ];
 
-  # Laptop-specific NVIDIA config (no driver selection here – dynamic GPU handles that)
+{
+  # Laptop-specific NVIDIA config
   hardware.nvidia = {
     powerManagement.enable = false;
     powerManagement.finegrained = false;

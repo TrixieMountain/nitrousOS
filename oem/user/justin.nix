@@ -1,3 +1,5 @@
+# oem/user/justin.nix
+# User profile for justin
 { config, pkgs, lib, ... }:
 
 {
@@ -13,11 +15,10 @@
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "justin";
 
-  services.displayManager.cosmic-greeter.enable = true;
-  services.desktopManager.cosmic.enable = true;
+  nitrousOS.plugin.desktop.cosmic.enable = true;
 
   ################################
-  # User-specific network settings
+  # Network settings
   ################################
   networking = {
     hostName = "nitrousOS-experimental";
@@ -25,15 +26,15 @@
   };
 
   ################################
-  # Dynamic GPU (per-user choice)
+  # Dynamic GPU
   ################################
-  services.dynamicGpu = {
+  nitrousOS.plugin.dynamicGpu = {
     enable = true;
     defaultMode = "igpu-only";
   };
 
   ################################
-  # User software selections
+  # Software selections
   ################################
   nitrousOS.software.enable = true;
 

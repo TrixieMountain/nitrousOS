@@ -1,6 +1,10 @@
+# lib/plugin/software.nix
+# Software package management with category-based enable flags
 { config, pkgs, lib, ... }:
 
 let
+  cfg = config.nitrousOS.software;
+
   # Packages that should NOT be auto-included in Pantheon app discovery
   pantheonSkip = [
     "elementary-screenshot-tool"   # deprecated alias
@@ -25,12 +29,9 @@ let
 
 in {
 
-  ##########################################################################
-  # Options definition
-  ##########################################################################
   options.nitrousOS.software = {
 
-    enable = lib.mkEnableOption "NitrousOS unified software module";
+    enable = lib.mkEnableOption "nitrousOS unified software module";
 
     core = {
       enable = lib.mkEnableOption "Core utilities";
@@ -43,6 +44,7 @@ in {
           just
           vscodium
         ];
+        description = "Core utility packages";
       };
     };
 
@@ -55,6 +57,7 @@ in {
           chromium
           mullvad-browser
         ];
+        description = "Web browser packages";
       };
     };
 
@@ -68,6 +71,7 @@ in {
           clamav
           tailscale
         ];
+        description = "Security and privacy packages";
       };
     };
 
@@ -79,6 +83,7 @@ in {
           signal-desktop
           thunderbird
         ];
+        description = "Communication packages";
       };
     };
 
@@ -90,6 +95,7 @@ in {
           claude-code
           hardinfo2
         ];
+        description = "Development packages";
       };
     };
 
@@ -98,23 +104,21 @@ in {
       packages = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         default = pantheonPackages;
+        description = "Pantheon/Elementary packages";
       };
     };
 
   };
 
-  ##########################################################################
-  # Config implementation
-  ##########################################################################
-  config = lib.mkIf config.nitrousOS.software.enable {
+  config = lib.mkIf cfg.enable {
 
     environment.systemPackages =
-         (category config.nitrousOS.software.core)
-      ++ (category config.nitrousOS.software.browsers)
-      ++ (category config.nitrousOS.software.security)
-      ++ (category config.nitrousOS.software.communication)
-      ++ (category config.nitrousOS.software.dev)
-      ++ (category config.nitrousOS.software.pantheon);
+         (category cfg.core)
+      ++ (category cfg.browsers)
+      ++ (category cfg.security)
+      ++ (category cfg.communication)
+      ++ (category cfg.dev)
+      ++ (category cfg.pantheon);
 
   };
 }

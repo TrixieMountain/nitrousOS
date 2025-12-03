@@ -1,9 +1,11 @@
+# lib/plugin/dynamic-gpu.nix
+# Dynamic hybrid GPU control for NVIDIA/Intel laptops
 { config, lib, pkgs, ... }:
 
 with lib;
 
 let
-  cfg = config.services.dynamicGpu;
+  cfg = config.nitrousOS.plugin.dynamicGpu;
 
   stateDir = "/var/lib/dynamic-gpu";
   modeFile = "${stateDir}/mode";
@@ -208,15 +210,17 @@ let
 
 in
 {
-  options.services.dynamicGpu = {
+  options.nitrousOS.plugin.dynamicGpu = {
     enable = mkEnableOption "Dynamic hybrid GPU control";
     defaultMode = mkOption {
       type = types.enum [ "auto" "igpu-only" "dgpu-forced" ];
       default = "auto";
+      description = "Default GPU mode";
     };
     disableMethod = mkOption {
       type = types.enum [ "auto" "pci-remove" "acpi-off" ];
       default = "auto";
+      description = "Method to disable discrete GPU";
     };
   };
 
@@ -266,13 +270,12 @@ in
       };
     };
 
-    systemd.services.dynamic-gpu-watchdog =
-      {
-        description = "Dynamic GPU watchdog";
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart = dynamicGpuApplyScript;
-        };
+    systemd.services.dynamic-gpu-watchdog = {
+      description = "Dynamic GPU watchdog";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = dynamicGpuApplyScript;
       };
+    };
   };
 }

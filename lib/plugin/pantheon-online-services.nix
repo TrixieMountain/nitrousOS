@@ -1,10 +1,12 @@
+# lib/plugin/pantheon-online-services.nix
+# Pantheon online services integration (GOA, keyring, geoclue, portal, polkit agents)
 { config, pkgs, lib, ... }:
 
 {
-  options.nitrousOS.pantheon.onlineSupport.enable =
+  options.nitrousOS.plugin.pantheon.onlineSupport =
     lib.mkEnableOption "Pantheon online-services integration (GOA, keyring, geoclue, portal, polkit agents)";
 
-  config = lib.mkIf config.nitrousOS.pantheon.onlineSupport.enable {
+  config = lib.mkIf config.nitrousOS.plugin.pantheon.onlineSupport {
 
     services.gnome.gnome-online-accounts.enable = true;
     services.gnome.gnome-keyring.enable = true;
@@ -17,7 +19,7 @@
 
     services.geoclue2.enable = true;
 
-    services.polkit.enable = true;
+    security.polkit.enable = true;
 
     environment.systemPackages = with pkgs.pantheon; [
       pantheon-agent-polkit
@@ -33,9 +35,9 @@
       granite7
     ];
 
-    services.xdg.portal = {
+    xdg.portal = {
       enable = true;
-      xdg-openUsePortal = true;
+      xdgOpenUsePortal = true;
       extraPortals = [
         pkgs.pantheon.xdg-desktop-portal-pantheon
       ];

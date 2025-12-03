@@ -26,52 +26,100 @@
 
     in {
       nixosConfigurations = {
-        # Dinitrogen - Full-featured desktop system (flagship)
-        dinitrogen = nixpkgs.lib.nixosSystem {
+        #######################################################################
+        # VM TARGETS (generic - no hardware config)
+        # Use these for disk images, VMs, and cloud deployments
+        #######################################################################
+
+        # Dinitrogen - Full-featured desktop
+        dinitrogen-vm = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             ./lib/system
-            ./configuration.nix
-            { nitrousOS.system = "dinitrogen"; }
+            ./oem/profiles/dinitrogen
+            ({ modulesPath, ... }: {
+              imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+              nitrousOS.system = "dinitrogen";
+              system.stateVersion = "25.11";
+              fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "ext4"; };
+              boot.loader.grub.device = "/dev/sda";
+            })
           ];
         };
 
-        # Oxide - Minimal server/headless system
-        oxide = nixpkgs.lib.nixosSystem {
+        # Oxide - Server base (SSH + Tailscale)
+        oxide-vm = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             ./lib/system
-            ./configuration.nix
-            { nitrousOS.system = "oxide"; }
+            ./oem/profiles/oxide
+            ({ modulesPath, ... }: {
+              imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+              nitrousOS.system = "oxide";
+              system.stateVersion = "25.11";
+              fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "ext4"; };
+              boot.loader.grub.device = "/dev/sda";
+            })
           ];
         };
 
-        # Trixie - Micro Enclave Controller (headscale/derp/tailscale)
-        trixie = nixpkgs.lib.nixosSystem {
+        # Trixie - Headscale coordination server AIO
+        trixie-vm = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             ./lib/system
-            ./configuration.nix
-            { nitrousOS.system = "trixie"; }
+            ./oem/profiles/trixie
+            ({ modulesPath, ... }: {
+              imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+              nitrousOS.system = "trixie";
+              system.stateVersion = "25.11";
+              fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "ext4"; };
+              boot.loader.grub.device = "/dev/sda";
+            })
           ];
         };
 
-        # Legacy alias for backward compatibility
-        nitrousOS = nixpkgs.lib.nixosSystem {
+        #######################################################################
+        # OEM HARDWARE TARGETS
+        # Physical machine configurations - add your hardware here
+        #######################################################################
+
+        # Example: Justin's Lenovo P14s with NVIDIA
+        # To use: sudo nixos-rebuild switch --flake .#justin-p14s
+        justin-p14s = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             ./lib/system
-            ./configuration.nix
-            { nitrousOS.system = "dinitrogen"; }
+            ./oem/profiles/dinitrogen
+            ./oem/hardware/hardware-configuration.nix
+            ./oem/hardware/nvidia-laptop-lenovo-p14s.nix
+            {
+              nitrousOS.system = "dinitrogen";
+              boot.initrd.luks.devices."luks-f91c7866-4b76-4443-b10f-4a0fe5689f16".device =
+                "/dev/disk/by-uuid/f91c7866-4b76-4443-b10f-4a0fe5689f16";
+              system.stateVersion = "25.11";
+            }
           ];
         };
+
+        #######################################################################
+        # ALIASES
+        #######################################################################
+
+        # Default targets point to VM versions (hardware-agnostic)
+        dinitrogen = self.nixosConfigurations.dinitrogen-vm;
+        oxide = self.nixosConfigurations.oxide-vm;
+        trixie = self.nixosConfigurations.trixie-vm;
+
+        # Legacy alias
+        nitrousOS = self.nixosConfigurations.justin-p14s;
       };
 
       # Disk images for VM deployment
       packages.${system} = {
-        dinitrogen-disk = makeDiskImage "dinitrogen" self.nixosConfigurations.dinitrogen;
-        oxide-disk = makeDiskImage "oxide" self.nixosConfigurations.oxide;
-        trixie-disk = makeDiskImage "trixie" self.nixosConfigurations.trixie;
+        dinitrogen-disk = makeDiskImage "dinitrogen" self.nixosConfigurations.dinitrogen-vm;
+        oxide-disk = makeDiskImage "oxide" self.nixosConfigurations.oxide-vm;
+        trixie-disk = makeDiskImage "trixie" self.nixosConfigurations.trixie-vm;
       };
     };
 }

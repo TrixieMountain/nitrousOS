@@ -30,6 +30,7 @@ help:
     @echo ""
     @echo "  ┌─ System Commands ───────────────────────────────────────────┐"
     @echo "  │                                                             │"
+    @echo "  │  install <dev> <tgt> Install to disk (LUKS encrypted)       │"
     @echo "  │  switch [target]     Build, activate, and add to bootloader │"
     @echo "  │  boot [target]       Build and set for next reboot          │"
     @echo "  │  test [target]       Build and activate (no boot entry)     │"
@@ -39,11 +40,19 @@ help:
     @echo "  │                                                             │"
     @echo "  └─────────────────────────────────────────────────────────────┘"
     @echo ""
-    @echo "  ┌─ Targets (default: dinitrogen) ─────────────────────────────┐"
+    @echo "  ┌─ Targets ────────────────────────────────────────────────────┐"
     @echo "  │                                                             │"
-    @echo "  │  dinitrogen          Full-featured desktop (flagship)       │"
-    @echo "  │  oxide               Minimal server/headless                │"
-    @echo "  │  trixie              Micro Enclave Controller (headscale)   │"
+    @echo "  │  VM Targets (generic):                                      │"
+    @echo "  │    dinitrogen-vm     Full-featured desktop                  │"
+    @echo "  │    oxide-vm          Server base (SSH + Tailscale)          │"
+    @echo "  │    trixie-vm         Headscale coordination server AIO      │"
+    @echo "  │                                                             │"
+    @echo "  │  OEM Hardware:                                              │"
+    @echo "  │    justin-p14s       Lenovo P14s + NVIDIA (dinitrogen)      │"
+    @echo "  │                                                             │"
+    @echo "  │  Aliases:                                                   │"
+    @echo "  │    dinitrogen/oxide/trixie -> *-vm                          │"
+    @echo "  │    nitrousOS -> justin-p14s                                 │"
     @echo "  │                                                             │"
     @echo "  └─────────────────────────────────────────────────────────────┘"
     @echo ""
@@ -76,25 +85,39 @@ help:
     @echo "  └─────────────────────────────────────────────────────────────┘"
     @echo ""
     @echo "  Examples:"
-    @echo "    just switch                    Switch to dinitrogen"
-    @echo "    just switch oxide              Switch to oxide"
-    @echo "    just sandbox trixie            Test trixie in VM"
-    @echo "    just usb dinitrogen /dev/sdX   Write ISO to USB"
-    @echo "    just build-vms                 Build all VM formats for dinitrogen"
-    @echo "    just build-vms oxide           Build all VM formats for oxide"
+    @echo "    just install /dev/nvme0n1 justin-p14s   Install to NVMe"
+    @echo "    just switch justin-p14s                 Switch physical machine"
+    @echo "    just sandbox oxide-vm                   Test oxide in QEMU"
+    @echo "    just build-vms trixie                   Build trixie disk images"
     @echo ""
 
 # Show available targets
 [group('utility')]
 targets:
     @echo "Available targets:"
-    @echo "  dinitrogen  Full-featured desktop (flagship)"
-    @echo "  oxide       Minimal server/headless"
-    @echo "  trixie      Micro Enclave Controller (headscale/derp/tailscale)"
+    @echo ""
+    @echo "  VM Targets (generic):"
+    @echo "    dinitrogen-vm    Full-featured desktop"
+    @echo "    oxide-vm         Server base (SSH + Tailscale)"
+    @echo "    trixie-vm        Headscale coordination server AIO"
+    @echo ""
+    @echo "  OEM Hardware Targets:"
+    @echo "    justin-p14s      Lenovo P14s with NVIDIA (dinitrogen)"
+    @echo ""
+    @echo "  Aliases (point to VM targets):"
+    @echo "    dinitrogen       -> dinitrogen-vm"
+    @echo "    oxide            -> oxide-vm"
+    @echo "    trixie           -> trixie-vm"
+    @echo "    nitrousOS        -> justin-p14s (legacy)"
 
 # ═══════════════════════════════════════════════════════════════════
 # SYSTEM COMMANDS
 # ═══════════════════════════════════════════════════════════════════
+
+# Install nitrousOS to a physical disk (LUKS encrypted)
+[group('system')]
+install device target:
+    sudo ./lib/install/nitrousOS-install.sh {{device}} {{target}}
 
 # Switch to the new configuration immediately
 [group('system')]

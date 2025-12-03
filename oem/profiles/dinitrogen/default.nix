@@ -1,5 +1,5 @@
-# oem/user/justin.nix
-# User profile for justin
+# oem/profiles/dinitrogen/default.nix
+# Full-featured desktop profile
 { config, pkgs, lib, ... }:
 
 {

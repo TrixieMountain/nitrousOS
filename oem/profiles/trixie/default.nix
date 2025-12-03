@@ -1,6 +1,7 @@
 # oem/profiles/trixie/default.nix
 # Headscale Coordination Server AIO
 # All-in-one: Tailscale client, Headscale server, DERP relay
+# User definitions are in oem/user/admin.nix
 #
 # Modes (configure via nitrousOS.trixie.mode):
 #   - "full"       : Headscale + DERP + Tailscale (default)
@@ -14,18 +15,6 @@ let
   mode = cfg.mode or "full";
 in
 {
-  ################################
-  # System user
-  ################################
-  users.users.admin = {
-    isNormalUser = true;
-    description = "Admin";
-    extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      # Add your SSH public keys here
-    ];
-  };
-
   ################################
   # Network settings
   ################################

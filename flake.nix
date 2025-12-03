@@ -37,6 +37,7 @@
           modules = [
             ./lib/system
             ./oem/profiles/dinitrogen
+            ./oem/user
             ({ modulesPath, ... }: {
               imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
               nitrousOS.system = "dinitrogen";
@@ -53,6 +54,7 @@
           modules = [
             ./lib/system
             ./oem/profiles/oxide
+            ./oem/user
             ({ modulesPath, ... }: {
               imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
               nitrousOS.system = "oxide";
@@ -69,6 +71,7 @@
           modules = [
             ./lib/system
             ./oem/profiles/trixie
+            ./oem/user
             ({ modulesPath, ... }: {
               imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
               nitrousOS.system = "trixie";
@@ -91,6 +94,7 @@
           modules = [
             ./lib/system
             ./oem/profiles/dinitrogen
+            ./oem/user
             ./oem/hardware/hardware-configuration.nix
             ./oem/hardware/nvidia-laptop-lenovo-p14s.nix
             {

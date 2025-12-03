@@ -65,7 +65,8 @@ nitrousOS/
 │   ├── system/            # System variant definitions
 │   └── install/           # Installation scripts
 └── oem/
-    ├── profiles/          # Target profiles (dinitrogen, oxide, trixie)
+    ├── profiles/          # System profiles (network, services, desktop)
+    ├── user/              # User definitions (credentials, software)
     └── hardware/          # Machine-specific hardware configs
 ```
 

@@ -7,7 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.0] - 2024-12-03
+## [0.2.2] - 2025-12-03
+
+### Added
+- **User Profile System**: Separated user definitions from system profiles
+  - `oem/user/` directory for user-specific configurations
+  - Auto-import mechanism via `oem/user/default.nix`
+  - System-conditional user activation (users only load on specified systems)
+  - `oem/user/justin.nix` - Desktop user for dinitrogen
+  - `oem/user/admin.nix` - Server admin for oxide/trixie
+
+### Changed
+- **OEM Profiles**: Now contain only system-level configuration
+  - Network settings, services, desktop environment
+  - User definitions moved to `oem/user/`
+- **Flake Structure**: All targets now import `./oem/user` module
+- Updated documentation to reflect user/profile separation
+
+### Removed
+- User definitions from `oem/profiles/*/default.nix`
+- Software selections from profile files (moved to user files)
+
+## [0.2.1] - 2025-12-03
 
 ### Added
 - **OEM Profiles**: Decoupled system profiles from hardware configuration
@@ -39,9 +60,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - `configuration.nix` - Configuration now in flake.nix and profiles
-- `oem/user/justin.nix` - Moved to `oem/profiles/dinitrogen/`
 
-## [0.2.1] - 2024-11-XX
+## [0.2.0] - 2024-11-XX
 
 ### Added
 - Licensing structure
@@ -49,10 +69,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Refactored working config into long-term structure
-
-## [0.2.0] - 2024-11-XX
-
-### Changed
 - Deleted nitrousOS system as the whole project is nitrousOS
 - Removed old dead code remnants
 

@@ -1,21 +1,10 @@
 # oem/profiles/oxide/default.nix
 # Server base profile - SSH + Tailscale only
 # Intended as a building block for custom server configurations
+# User definitions are in oem/user/admin.nix
 { config, pkgs, lib, ... }:
 
 {
-  ################################
-  # System user
-  ################################
-  users.users.admin = {
-    isNormalUser = true;
-    description = "Admin";
-    extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      # Add your SSH public keys here
-    ];
-  };
-
   ################################
   # Network settings
   ################################

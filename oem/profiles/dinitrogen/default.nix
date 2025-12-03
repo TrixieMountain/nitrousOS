@@ -1,20 +1,12 @@
 # oem/profiles/dinitrogen/default.nix
-# Full-featured desktop profile
+# Full-featured desktop profile - system configuration
+# User definitions are in oem/user/justin.nix
 { config, pkgs, lib, ... }:
 
 {
-  users.users.justin = {
-    isNormalUser = true;
-    description = "Justin";
-    extraGroups = [ "networkmanager" "wheel" ];
-  };
-
   ################################
   # Desktop Environment (COSMIC)
   ################################
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "justin";
-
   nitrousOS.plugin.desktop.cosmic.enable = true;
 
   ################################
@@ -32,16 +24,4 @@
     enable = true;
     defaultMode = "igpu-only";
   };
-
-  ################################
-  # Software selections
-  ################################
-  nitrousOS.software.enable = true;
-
-  nitrousOS.software.core.enable = true;
-  nitrousOS.software.browsers.enable = true;
-  nitrousOS.software.security.enable = true;
-  nitrousOS.software.communication.enable = true;
-  nitrousOS.software.dev.enable = true;
-  nitrousOS.software.pantheon.enable = true;
 }

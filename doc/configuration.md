@@ -23,7 +23,8 @@ nitrousOS/
 │       ├── oxide/      # Server base
 │       └── trixie/     # Headscale AIO
 └── oem/
-    ├── profiles/       # Target profiles
+    ├── profiles/       # System profiles (network, services, desktop)
+    ├── user/           # User definitions (credentials, software)
     └── hardware/       # Machine-specific configs
 ```
 
@@ -215,6 +216,71 @@ For Headscale coordination servers:
 | `relay` | DERP relay only |
 | `exit-node` | Tailscale exit node |
 | `derp` | DERP server only |
+
+## User Profiles
+
+User profiles define user accounts, credentials, and software selections. They are stored in `oem/user/` and automatically imported into all system configurations.
+
+### User File Structure
+
+Each user file in `oem/user/` can specify which system profiles it should be enabled for:
+
+```nix
+# oem/user/myuser.nix
+{ config, pkgs, lib, ... }:
+
+let
+  enableForSystems = [ "dinitrogen" ];  # Only enable for these systems
+  enabled = builtins.elem (config.nitrousOS.system or "") enableForSystems;
+in
+{
+  config = lib.mkIf enabled {
+    users.users.myuser = {
+      isNormalUser = true;
+      description = "My User";
+      extraGroups = [ "networkmanager" "wheel" ];
+    };
+
+    # Software selections for this user
+    nitrousOS.software.enable = true;
+    nitrousOS.software.browsers.enable = true;
+  };
+}
+```
+
+### Available Users
+
+| User | Enabled Systems | Description |
+|------|-----------------|-------------|
+| `justin` | dinitrogen | Desktop user with full software suite |
+| `admin` | oxide, trixie | Server admin with SSH key auth |
+
+### Adding a New User
+
+1. Create a new file in `oem/user/`:
+   ```bash
+   touch oem/user/newuser.nix
+   ```
+
+2. Define the user with system conditions:
+   ```nix
+   { config, pkgs, lib, ... }:
+   let
+     enableForSystems = [ "dinitrogen" "oxide" ];
+     enabled = builtins.elem (config.nitrousOS.system or "") enableForSystems;
+   in
+   {
+     config = lib.mkIf enabled {
+       users.users.newuser = {
+         isNormalUser = true;
+         description = "New User";
+         extraGroups = [ "wheel" ];
+       };
+     };
+   }
+   ```
+
+3. The user will be automatically imported via `oem/user/default.nix`.
 
 ## Creating a Custom Profile
 

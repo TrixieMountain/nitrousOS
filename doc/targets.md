@@ -61,7 +61,8 @@ For convenience, short names are aliased to VM targets:
 - Creative workstation
 
 ### Profile Location
-`oem/profiles/dinitrogen/default.nix`
+- System: `oem/profiles/dinitrogen/default.nix`
+- User: `oem/user/justin.nix`
 
 ---
 
@@ -82,7 +83,8 @@ For convenience, short names are aliased to VM targets:
 - Web server base
 
 ### Profile Location
-`oem/profiles/oxide/default.nix`
+- System: `oem/profiles/oxide/default.nix`
+- User: `oem/user/admin.nix`
 
 ### Customization
 
@@ -133,7 +135,8 @@ Configure via `nitrousOS.trixie.mode`:
 - DERP relay for improved connectivity
 
 ### Profile Location
-`oem/profiles/trixie/default.nix`
+- System: `oem/profiles/trixie/default.nix`
+- User: `oem/user/admin.nix`
 
 ### Configuration
 
@@ -164,6 +167,7 @@ my-custom-vm = nixpkgs.lib.nixosSystem {
   modules = [
     ./lib/system
     ./oem/profiles/my-custom
+    ./oem/user
     ({ modulesPath, ... }: {
       imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
       nitrousOS.system = "oxide";  # or appropriate variant
@@ -185,6 +189,7 @@ my-machine = nixpkgs.lib.nixosSystem {
   modules = [
     ./lib/system
     ./oem/profiles/dinitrogen  # or your profile
+    ./oem/user
     ./oem/hardware/my-hardware-configuration.nix
     {
       nitrousOS.system = "dinitrogen";

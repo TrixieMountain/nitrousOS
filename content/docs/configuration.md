@@ -16,7 +16,17 @@ Each variant has different defaults for core modules and plugins.
 
 ## Core Modules
 
-Core modules provide essential system functionality. Configure in your profile:
+Core modules provide essential system functionality. All are located in `lib/core/`:
+
+| Module | File | Description |
+|--------|------|-------------|
+| Boot | `boot.nix` | systemd-boot configuration |
+| Locale | `locale.nix` | Timezone and locale settings |
+| Audio | `audio.nix` | PipeWire audio stack |
+| Services | `services.nix` | Printing, libinput |
+| Nix | `nix.nix` | Flakes, unfree packages, auto-upgrade |
+
+Configure in your profile:
 
 ```nix
 # Boot configuration
@@ -31,11 +41,24 @@ nitrousOS.core.audio.enable = true;
 
 # Base services (printing, libinput)
 nitrousOS.core.services.enable = true;
+nitrousOS.core.services.printing = true;  # Can disable for servers
 
 # Nix settings
 nitrousOS.core.nix.enable = true;
+nitrousOS.core.nix.allowUnfree = true;  # Default: true
 nitrousOS.core.nix.autoUpgrade.enable = true;
+nitrousOS.core.nix.autoUpgrade.allowReboot = true;
+nitrousOS.core.nix.autoUpgrade.channel = "https://channels.nixos.org/nixos-25.11";
 ```
+
+### Defaults by System Variant
+
+| Option | Dinitrogen | Oxide | Trixie |
+|--------|------------|-------|--------|
+| `core.audio.enable` | true | **false** | true |
+| `core.services.printing` | true | **false** | true |
+| `core.nix.autoUpgrade.enable` | **true** | false | false |
+| `core.nix.autoUpgrade.allowReboot` | **true** | false | false |
 
 ## Plugin System
 
@@ -55,45 +78,89 @@ nitrousOS.plugin.desktop.cosmic.enable = true;
 
 ### Dynamic GPU Control
 
-For laptops with hybrid NVIDIA/Intel graphics:
+For laptops with hybrid NVIDIA/Intel graphics (`lib/plugin/dynamic-gpu.nix`):
 
 ```nix
 nitrousOS.plugin.dynamicGpu = {
   enable = true;
   defaultMode = "igpu-only";  # or "auto" or "dgpu-forced"
+  disableMethod = "auto";     # or "pci-remove" or "acpi-off"
 };
 ```
 
-CLI commands:
-- `gpu-mode auto` - Automatic switching
+**Modes:**
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `auto` | Switches based on external display/dock | Daily use |
+| `igpu-only` | Integrated GPU only | Battery saving |
+| `dgpu-forced` | Discrete GPU always on | Gaming, rendering |
+
+**Disable Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `auto` | Auto-detects ThinkPad → ACPI, others → PCI remove |
+| `acpi-off` | Uses ACPI `_OFF` call (ThinkPads, some Lenovos) |
+| `pci-remove` | Removes GPU from PCI bus |
+
+**CLI Commands:**
+- `gpu-mode auto` - Automatic switching based on display/dock
 - `gpu-mode igpu` - Integrated GPU only (power saving)
 - `gpu-mode dgpu` - Force discrete GPU
-- `nvidia-offload <command>` - Run command on discrete GPU
+- `nvidia-offload <command>` - Run single command on discrete GPU
+
+**Automatic Detection:**
+- External monitors via DRM status
+- Thunderbolt docks
+- ThinkPad-specific ACPI paths
 
 ### Software Categories
 
-Enable software packages by category:
+Enable software packages by category (`lib/plugin/software.nix`):
 
 ```nix
 nitrousOS.software.enable = true;
 
-# Core utilities (wget, vim, git, just, VSCodium)
+# Core utilities
 nitrousOS.software.core.enable = true;
 
-# Browsers (Firefox, Chromium, Mullvad Browser)
+# Browsers
 nitrousOS.software.browsers.enable = true;
 
-# Security (KeePassXC, Mullvad VPN, ClamAV, Tailscale)
+# Security tools
 nitrousOS.software.security.enable = true;
 
-# Communication (Signal, Thunderbird)
+# Communication
 nitrousOS.software.communication.enable = true;
 
 # Development tools
 nitrousOS.software.dev.enable = true;
 
-# Pantheon apps
+# Pantheon/Elementary apps
 nitrousOS.software.pantheon.enable = true;
+```
+
+**Default Packages by Category:**
+
+| Category | Packages |
+|----------|----------|
+| `core` | wget, vim, git, just, VSCodium |
+| `browsers` | Firefox, Chromium, Mullvad Browser |
+| `security` | KeePassXC, Mullvad VPN, ClamAV, Tailscale |
+| `communication` | Signal Desktop, Thunderbird |
+| `dev` | Claude Code, Hardinfo2 |
+| `pantheon` | All Elementary/Pantheon apps (auto-discovered) |
+
+**Custom Packages:**
+
+Override default packages for any category:
+
+```nix
+nitrousOS.software.browsers = {
+  enable = true;
+  packages = with pkgs; [ firefox brave ];  # Custom browser list
+};
 ```
 
 ## User Profiles

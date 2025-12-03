@@ -68,6 +68,7 @@ Perfect for laptops with hybrid NVIDIA/Intel graphics.
 nitrousOS.plugin.dynamicGpu = {
   enable = true;
   defaultMode = "igpu-only";
+  disableMethod = "auto";  # Auto-detects ThinkPad vs others
 };
 ```
 
@@ -75,24 +76,32 @@ nitrousOS.plugin.dynamicGpu = {
 
 | Mode | Description | Power Usage |
 |------|-------------|-------------|
-| `auto` | Automatic switching | Medium |
+| `auto` | Switches based on external display/dock | Adaptive |
 | `igpu-only` | Integrated only | Low |
 | `dgpu-forced` | Discrete always on | High |
+
+### Intelligent Detection
+
+In `auto` mode, the GPU automatically enables when:
+- External monitor connected (via DRM)
+- Thunderbolt dock detected
+- Manual override via CLI
 
 ### CLI Commands
 
 ```bash
-# Check current mode
-gpu-mode
-
 # Switch modes
-gpu-mode auto
-gpu-mode igpu
-gpu-mode dgpu
+gpu-mode auto   # Automatic based on display/dock
+gpu-mode igpu   # Force integrated only
+gpu-mode dgpu   # Force discrete on
 
-# Run app on discrete GPU
+# Run single app on discrete GPU
 nvidia-offload blender
 ```
+
+### ThinkPad Optimization
+
+Automatically uses ACPI `_OFF` calls for Lenovo ThinkPads (P14s, T14, X1, etc.) for cleaner GPU power management.
 
 ---
 
@@ -150,28 +159,34 @@ One repository, three optimized configurations:
 
 Full-featured desktop for daily use.
 
-- COSMIC desktop
-- All software categories
-- Dynamic GPU support
-- Auto-login
+- COSMIC desktop environment
+- All software categories available
+- Dynamic GPU support for hybrid laptops
+- Auto-upgrades enabled with reboot
+- Auto-login support
 
 ### Oxide
 
 Minimal server foundation.
 
-- SSH only
+- SSH-only with key authentication
 - Tailscale mesh networking
-- Perfect for Docker/Kubernetes
-- Extend with your services
+- No audio, minimal services
+- Auto-upgrades disabled (stability)
+- Perfect base for Docker/Kubernetes
 
 ### Trixie
 
 Self-hosted network infrastructure.
 
-- Headscale control server
-- Built-in DERP relay
-- ACME certificates
-- Multiple operation modes
+- Headscale control server (self-hosted Tailscale)
+- Built-in DERP relay server
+- ACME/Let's Encrypt certificates
+- Multiple operation modes:
+  - `full` - Headscale + DERP + Tailscale
+  - `relay` - DERP relay only
+  - `exit-node` - Tailscale exit node
+  - `derp` - DERP server only
 
 ---
 

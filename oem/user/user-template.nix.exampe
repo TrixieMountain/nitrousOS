@@ -1,0 +1,29 @@
+{ config, pkgs, lib, ... }:
+
+{
+  users.users.<username> = {
+    isNormalUser = true;
+    description = "<Full Name>";
+    extraGroups = [ "networkmanager" "wheel" ];
+  };
+
+  # Desktop selection (import one desktop module)
+  # imports = [ ../desktop/cosmic.nix ];
+
+  # Network preset (import one network module)
+  # imports = [ ../network/wifi.nix ];
+
+  # Software categories
+  nitrousOS.software.enable = true;
+  nitrousOS.software.core.enable = true;
+  nitrousOS.software.browsers.enable = true;
+  nitrousOS.software.security.enable = true;
+  nitrousOS.software.communication.enable = true;
+  nitrousOS.software.dev.enable = true;
+
+  # Optional: Pantheon apps
+  # nitrousOS.software.pantheon.enable = true;
+
+  # Optional: Online services for Pantheon apps
+  # imports = [ ../software/pantheon-online-services.nix ];
+}

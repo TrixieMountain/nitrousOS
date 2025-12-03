@@ -18,10 +18,4 @@
     intelBusId = "PCI:0:2:0";
     nvidiaBusId = "PCI:3:0:0";
   };
-
-   services.dynamicGpu = {
-    enable = true;
-    defaultMode = "battery";
-  };
-  
 }

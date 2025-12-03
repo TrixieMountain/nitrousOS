@@ -21,7 +21,7 @@
   # Network settings
   ################################
   networking = {
-    hostName = "nitrousOS-experimental";
+    hostName = "nitrousOS";
     networkmanager.enable = true;
   };
 

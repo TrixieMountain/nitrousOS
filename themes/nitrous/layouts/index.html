@@ -1,0 +1,206 @@
+{{ define "main" }}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="hero-logo">N<sub>2</sub>O</span>
+        {{ .Site.Params.hero.title }}
+      </h1>
+      <p class="hero-subtitle">{{ .Site.Params.hero.subtitle }}</p>
+      <p class="hero-description">{{ .Site.Params.hero.description }}</p>
+      <div class="hero-actions">
+        <a href="{{ "docs/getting-started/" | relURL }}" class="btn btn-primary">Get Started</a>
+        <a href="{{ .Site.Params.github }}" class="btn btn-secondary" target="_blank" rel="noopener">
+          View on GitHub
+        </a>
+      </div>
+      <div class="hero-code">
+        <pre><code># Quick test in a VM
+nix-shell -p just --run "just sandbox dinitrogen"
+
+# Or install to physical hardware
+just install /dev/nvme0n1 dinitrogen</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- System Variants Section -->
+<section class="variants" id="variants">
+  <div class="container">
+    <h2 class="section-title">Three Specialized System Variants</h2>
+    <p class="section-subtitle">One repository, infinite possibilities</p>
+
+    <div class="variant-grid">
+      <div class="variant-card variant-dinitrogen">
+        <div class="variant-icon">🖥️</div>
+        <h3>Dinitrogen</h3>
+        <p class="variant-tagline">Full-Featured Desktop</p>
+        <ul>
+          <li>COSMIC desktop environment</li>
+          <li>Dynamic GPU control (NVIDIA/Intel)</li>
+          <li>Complete software suite</li>
+          <li>Auto-login & auto-upgrades</li>
+        </ul>
+        <a href="{{ "docs/targets/#dinitrogen" | relURL }}" class="btn btn-outline">Learn More</a>
+      </div>
+
+      <div class="variant-card variant-oxide">
+        <div class="variant-icon">🔧</div>
+        <h3>Oxide</h3>
+        <p class="variant-tagline">Minimal Server Base</p>
+        <ul>
+          <li>SSH-only (key-based auth)</li>
+          <li>Tailscale mesh networking</li>
+          <li>Minimal footprint</li>
+          <li>Perfect foundation for services</li>
+        </ul>
+        <a href="{{ "docs/targets/#oxide" | relURL }}" class="btn btn-outline">Learn More</a>
+      </div>
+
+      <div class="variant-card variant-trixie">
+        <div class="variant-icon">🌐</div>
+        <h3>Trixie</h3>
+        <p class="variant-tagline">Headscale Coordination Server</p>
+        <ul>
+          <li>Self-hosted Tailscale control plane</li>
+          <li>Built-in DERP relay</li>
+          <li>Multiple operation modes</li>
+          <li>ACME/Let's Encrypt ready</li>
+        </ul>
+        <a href="{{ "docs/targets/#trixie" | relURL }}" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+  <div class="container">
+    <h2 class="section-title">Key Features</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Full-Disk Encryption</h3>
+        <p>LUKS2 encryption for root, home, and swap partitions. Secure by default.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🧩</div>
+        <h3>Modular Plugin System</h3>
+        <p>Enable only what you need. Software categories, desktop environments, and features as plugins.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎮</div>
+        <h3>Dynamic GPU Control</h3>
+        <p>Seamless switching between integrated and discrete GPUs. Perfect for laptops.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">☁️</div>
+        <h3>Multi-Platform Deployment</h3>
+        <p>Build for QEMU, VMware, VirtualBox, Hyper-V, Azure, AWS, and more.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🖼️</div>
+        <h3>4 Desktop Environments</h3>
+        <p>COSMIC, GNOME, KDE Plasma 6, and Pantheon. Choose your interface.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">♻️</div>
+        <h3>Reproducible Builds</h3>
+        <p>Nix Flakes ensure consistent, auditable builds every time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Start Section -->
+<section class="quickstart" id="quickstart">
+  <div class="container">
+    <h2 class="section-title">Quick Start</h2>
+
+    <div class="quickstart-steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Clone the Repository</h3>
+        <pre><code>git clone https://github.com/TrixieMountain/nitrousOS.git
+cd nitrousOS</code></pre>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Test in a VM</h3>
+        <pre><code># Desktop environment
+just sandbox dinitrogen
+
+# Or minimal server
+just sandbox oxide</code></pre>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Deploy</h3>
+        <pre><code># Physical hardware (with LUKS encryption)
+just install /dev/nvme0n1 dinitrogen
+
+# Or build VM images
+just build-vms oxide</code></pre>
+      </div>
+    </div>
+
+    <div class="quickstart-cta">
+      <a href="{{ "docs/getting-started/" | relURL }}" class="btn btn-primary">Full Getting Started Guide</a>
+    </div>
+  </div>
+</section>
+
+<!-- VM Formats Section -->
+<section class="formats" id="formats">
+  <div class="container">
+    <h2 class="section-title">Deploy Anywhere</h2>
+    <p class="section-subtitle">8 output formats for any platform</p>
+
+    <div class="format-grid">
+      <div class="format-item">
+        <strong>RAW</strong>
+        <span>Direct disk image</span>
+      </div>
+      <div class="format-item">
+        <strong>QCOW2</strong>
+        <span>QEMU/KVM</span>
+      </div>
+      <div class="format-item">
+        <strong>VMDK</strong>
+        <span>VMware</span>
+      </div>
+      <div class="format-item">
+        <strong>VDI</strong>
+        <span>VirtualBox</span>
+      </div>
+      <div class="format-item">
+        <strong>VHDX</strong>
+        <span>Hyper-V</span>
+      </div>
+      <div class="format-item">
+        <strong>Azure VHD</strong>
+        <span>Microsoft Azure</span>
+      </div>
+      <div class="format-item">
+        <strong>OVA</strong>
+        <span>VMware/VirtualBox</span>
+      </div>
+      <div class="format-item">
+        <strong>AMI</strong>
+        <span>AWS EC2</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{ end }}

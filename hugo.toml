@@ -1,0 +1,65 @@
+baseURL = 'https://www.nitrousos.com/'
+languageCode = 'en-us'
+title = 'nitrousOS'
+theme = 'nitrous'
+
+# For GitHub Pages / Cloudflare
+canonifyURLs = true
+relativeURLs = false
+
+[params]
+  description = "Modular NixOS distribution with full-disk encryption for desktops, servers, and network infrastructure"
+  author = "TrixieMountain"
+  github = "https://github.com/TrixieMountain/nitrousOS"
+  version = "0.2.2"
+  tagline = "Modular. Secure. Versatile."
+
+[params.hero]
+  title = "nitrousOS"
+  subtitle = "Modular NixOS for Desktops, Servers & Infrastructure"
+  description = "A production-ready NixOS distribution with full-disk encryption, three specialized system variants, and a powerful plugin architecture."
+
+[params.features]
+  enable = true
+
+[params.variants]
+  enable = true
+
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Features"
+    url = "/features/"
+    weight = 2
+  [[menu.main]]
+    name = "Documentation"
+    url = "/docs/"
+    weight = 3
+  [[menu.main]]
+    name = "Download"
+    url = "/download/"
+    weight = 4
+  [[menu.main]]
+    name = "GitHub"
+    url = "https://github.com/TrixieMountain/nitrousOS"
+    weight = 5
+
+[markup]
+  [markup.highlight]
+    style = "dracula"
+    lineNos = true
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+  page = ["HTML"]
+
+# Build settings for deployment
+[build]
+  writeStats = true

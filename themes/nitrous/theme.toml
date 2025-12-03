@@ -1,0 +1,10 @@
+name = "nitrous"
+license = "Apache-2.0"
+licenselink = "https://github.com/TrixieMountain/nitrousOS/blob/master/LICENSE"
+description = "Custom theme for nitrousOS documentation"
+homepage = "https://www.nitrousos.com/"
+min_version = "0.112.0"
+
+[author]
+  name = "TrixieMountain"
+  homepage = "https://github.com/TrixieMountain"

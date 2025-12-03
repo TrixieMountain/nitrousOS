@@ -1,0 +1,8 @@
+# Cloudflare Pages redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Redirect non-www to www (if using apex domain)
+# https://nitrousos.com/* https://www.nitrousos.com/:splat 301
+
+# Legacy redirects (add as needed)
+# /old-page /new-page 301

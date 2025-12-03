@@ -1,0 +1,26 @@
+<header class="site-header">
+  <nav class="container">
+    <a href="{{ "/" | relURL }}" class="logo">
+      <span class="logo-icon">N<sub>2</sub>O</span>
+      <span class="logo-text">nitrousOS</span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="nav-menu">
+      {{ range .Site.Menus.main }}
+      <li>
+        <a href="{{ .URL }}" {{ if hasPrefix .URL "http" }}target="_blank" rel="noopener"{{ end }}
+           {{ if eq $.RelPermalink .URL }}class="active"{{ end }}>
+          {{ .Name }}
+          {{ if hasPrefix .URL "http" }}<span class="external-icon">↗</span>{{ end }}
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </nav>
+</header>

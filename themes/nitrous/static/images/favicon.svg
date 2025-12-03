@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="20" fill="#0d1117"/>
+  <text x="50" y="58" font-family="ui-monospace, monospace" font-size="32" font-weight="700" fill="#58a6ff" text-anchor="middle">
+    N<tspan font-size="20" baseline-shift="sub">2</tspan>O
+  </text>
+</svg>

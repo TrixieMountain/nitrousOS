@@ -1,0 +1,44 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="logo-icon">N<sub>2</sub>O</span>
+        <p>Modular NixOS distribution for desktops, servers, and network infrastructure.</p>
+        <p class="version">Version {{ .Site.Params.version }}</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Documentation</h4>
+        <ul>
+          <li><a href="{{ "docs/getting-started/" | relURL }}">Getting Started</a></li>
+          <li><a href="{{ "docs/installation/" | relURL }}">Installation</a></li>
+          <li><a href="{{ "docs/configuration/" | relURL }}">Configuration</a></li>
+          <li><a href="{{ "docs/vm-builder/" | relURL }}">VM Builder</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>System Variants</h4>
+        <ul>
+          <li><a href="{{ "docs/targets/#dinitrogen" | relURL }}">Dinitrogen (Desktop)</a></li>
+          <li><a href="{{ "docs/targets/#oxide" | relURL }}">Oxide (Server)</a></li>
+          <li><a href="{{ "docs/targets/#trixie" | relURL }}">Trixie (Headscale)</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Community</h4>
+        <ul>
+          <li><a href="{{ .Site.Params.github }}" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="{{ .Site.Params.github }}/issues" target="_blank" rel="noopener">Issues</a></li>
+          <li><a href="{{ .Site.Params.github }}/releases" target="_blank" rel="noopener">Releases</a></li>
+          <li><a href="{{ .Site.Params.github }}/blob/master/LICENSE" target="_blank" rel="noopener">License (Apache 2.0)</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {{ now.Year }} TrixieMountain. Licensed under Apache 2.0.</p>
+    </div>
+  </div>
+</footer>

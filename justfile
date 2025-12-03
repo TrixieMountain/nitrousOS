@@ -189,7 +189,9 @@ build-vms target=default_target: (build-raw target) (convert-all target) (make-o
 build-raw target=default_target:
     mkdir -p {{distdir}}/vm/{{target}}
     nix build .#{{target}}-disk --out-link {{distdir}}/vm/{{target}}/raw-result
+    rm -f {{distdir}}/vm/{{target}}/{{target}}.raw
     cp {{distdir}}/vm/{{target}}/raw-result/nixos.img {{distdir}}/vm/{{target}}/{{target}}.raw
+    chmod 644 {{distdir}}/vm/{{target}}/{{target}}.raw
     @echo "✔ RAW image built: {{distdir}}/vm/{{target}}/{{target}}.raw"
 
 # Convert to all formats (parallel-safe)
@@ -199,32 +201,32 @@ convert-all target=default_target: (qcow2 target) (vmdk target) (vdi target) (vh
 # Convert to QCOW2 (QEMU/KVM)
 [group('vm')]
 qcow2 target=default_target:
-    qemu-img convert -O qcow2 {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.qcow2
+    nix-shell -p qemu --run "qemu-img convert -O qcow2 {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.qcow2"
     @echo "✔ QCOW2 generated: {{distdir}}/vm/{{target}}/{{target}}.qcow2"
 
 # Convert to VMDK (VMware)
 [group('vm')]
 vmdk target=default_target:
-    qemu-img convert -O vmdk {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.vmdk
+    nix-shell -p qemu --run "qemu-img convert -O vmdk {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.vmdk"
     @echo "✔ VMDK generated: {{distdir}}/vm/{{target}}/{{target}}.vmdk"
 
 # Convert to VDI (VirtualBox)
 [group('vm')]
 vdi target=default_target:
-    qemu-img convert -O vdi {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.vdi
+    nix-shell -p qemu --run "qemu-img convert -O vdi {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.vdi"
     @echo "✔ VDI generated: {{distdir}}/vm/{{target}}/{{target}}.vdi"
 
 # Convert to VHDX (Hyper-V)
 [group('vm')]
 vhdx target=default_target:
-    qemu-img convert -O vhdx {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.vhdx
+    nix-shell -p qemu --run "qemu-img convert -O vhdx {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}.vhdx"
     @echo "✔ VHDX generated: {{distdir}}/vm/{{target}}/{{target}}.vhdx"
 
 # Convert to Azure VHD (fixed-size, aligned)
 [group('vm')]
 azure-vhd target=default_target:
-    qemu-img convert -O vpc -o subformat=fixed,force_size {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}-azure.vhd
-    python3 -c 'import os; p="{{distdir}}/vm/{{target}}/{{target}}-azure.vhd"; s=os.path.getsize(p); rem=s%512; open(p,"ab").write(b"\x00"*(512-rem)) if rem else None'
+    nix-shell -p qemu --run "qemu-img convert -O vpc -o subformat=fixed,force_size {{distdir}}/vm/{{target}}/{{target}}.raw {{distdir}}/vm/{{target}}/{{target}}-azure.vhd"
+    nix-shell -p python3 --run "python3 -c 'import os; p=\"{{distdir}}/vm/{{target}}/{{target}}-azure.vhd\"; s=os.path.getsize(p); rem=s%512; open(p,\"ab\").write(b\"\\x00\"*(512-rem)) if rem else None'"
     @echo "✔ Azure VHD generated: {{distdir}}/vm/{{target}}/{{target}}-azure.vhd"
 
 # Create OVA package (VMware/VirtualBox)

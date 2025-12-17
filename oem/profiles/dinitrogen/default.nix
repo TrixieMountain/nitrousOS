@@ -5,9 +5,9 @@
 
 {
   ################################
-  # Desktop Environment (COSMIC)
+  # Desktop Environment (Pantheon)
   ################################
-  nitrousOS.plugin.desktop.cosmic.enable = true;
+  nitrousOS.plugin.desktop.pantheon.enable = true;
 
   ################################
   # Network settings

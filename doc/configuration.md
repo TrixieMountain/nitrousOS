@@ -40,7 +40,7 @@ Select your base system variant:
 
 | Variant | Description |
 |---------|-------------|
-| `dinitrogen` | Full desktop with COSMIC DE |
+| `dinitrogen` | Full desktop (COSMIC, Pantheon, GNOME, or KDE) |
 | `oxide` | Minimal server base |
 | `trixie` | Headscale coordination server |
 

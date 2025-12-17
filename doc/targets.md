@@ -45,7 +45,11 @@ For convenience, short names are aliased to VM targets:
 **Full-featured desktop system**
 
 ### Features
-- COSMIC desktop environment
+- Configurable desktop environment (choose one):
+  - **COSMIC** - Modern Rust-based DE from System76
+  - **Pantheon** - Elegant elementary OS-style DE
+  - **GNOME** - Popular GTK-based DE
+  - **KDE Plasma** - Feature-rich Qt-based DE
 - NetworkManager for connectivity
 - Dynamic GPU switching (NVIDIA/Intel)
 - Full software suite:
@@ -63,6 +67,18 @@ For convenience, short names are aliased to VM targets:
 ### Profile Location
 - System: `oem/profiles/dinitrogen/default.nix`
 - User: `oem/user/justin.nix`
+
+### Switching Desktop Environment
+
+Edit `oem/profiles/dinitrogen/default.nix` and enable your preferred DE:
+
+```nix
+# Choose ONE of the following:
+nitrousOS.plugin.desktop.cosmic.enable = true;    # COSMIC (default)
+nitrousOS.plugin.desktop.pantheon.enable = true;  # Pantheon
+nitrousOS.plugin.desktop.gnome.enable = true;     # GNOME
+nitrousOS.plugin.desktop.kde.enable = true;       # KDE Plasma
+```
 
 ---
 

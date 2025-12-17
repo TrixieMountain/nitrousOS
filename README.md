@@ -6,7 +6,7 @@ A modular NixOS-based Linux distribution with full-disk encryption, designed for
 
 | Target | Description |
 |--------|-------------|
-| **dinitrogen** | Full-featured desktop with COSMIC DE |
+| **dinitrogen** | Full-featured desktop (COSMIC, Pantheon, GNOME, or KDE) |
 | **oxide** | Minimal server base (SSH + Tailscale) |
 | **trixie** | Headscale coordination server (Tailscale + Headscale + DERP) |
 

@@ -89,6 +89,7 @@ in {
 
     dev = {
       enable = lib.mkEnableOption "Development tools";
+      programs.nix-ld.enable = true;
       packages = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         default = with pkgs; [

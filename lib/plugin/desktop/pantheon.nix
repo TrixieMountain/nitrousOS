@@ -9,7 +9,7 @@
 
   config = lib.mkIf config.nitrousOS.plugin.desktop.pantheon.enable {
     services.xserver.enable = true;
-    services.xserver.desktopManager.pantheon.enable = true;
+    services.desktopManager.pantheon.enable = true;
 
     services.xserver.displayManager.lightdm.enable = true;
     services.displayManager.autoLogin.enable = lib.mkDefault false;

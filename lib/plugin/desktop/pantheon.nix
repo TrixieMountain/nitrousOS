@@ -14,6 +14,9 @@
     services.xserver.displayManager.lightdm.enable = true;
     services.displayManager.autoLogin.enable = lib.mkDefault false;
 
+    # Ensure all .desktop files are indexed in the applications menu
+    environment.pathsToLink = [ "/share/applications" ];
+
     # Pantheon theming
     environment.systemPackages = with pkgs.pantheon; [
       elementary-gtk-theme

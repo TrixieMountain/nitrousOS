@@ -12,7 +12,7 @@ in
     users.users.justin = {
       isNormalUser = true;
       description = "Justin";
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [ "networkmanager" "wheel" "scanner" "lp" ];
     };
 
     # Auto-login

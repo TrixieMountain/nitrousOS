@@ -345,7 +345,41 @@ Profiles combine configuration for specific use cases.
 }
 ```
 
-## Adding Hardware Configuration
+## Hardware Configurations
+
+Hardware configurations in `oem/hardware/` provide machine-specific settings.
+
+### Printing and Scanning (`oem/hardware/printers.nix`)
+
+Enables CUPS printing, SANE scanning, and network discovery:
+
+```nix
+{
+  imports = [ ./oem/hardware/printers.nix ];
+}
+```
+
+**Features:**
+- CUPS printing with Epson ET-2850 driver (`epson-escpr2`)
+- Scanner support via SANE with AirScan/eSCL backend
+- Avahi/mDNS for network printer/scanner autodiscovery
+- Windows share discovery (WS-Discovery via `samba-wsdd`)
+
+**Required user groups** for scanner access:
+```nix
+users.users.myuser.extraGroups = [ "scanner" "lp" ];
+```
+
+**CLI commands:**
+```bash
+# List detected scanners
+scanimage -L
+
+# Access CUPS web interface
+xdg-open http://localhost:631
+```
+
+### Custom Hardware Configuration
 
 For physical machines, create a hardware configuration:
 

@@ -1,13 +1,12 @@
 # oem/profiles/dinitrogen/default.nix
 # Full-featured desktop profile - system configuration
 # User definitions are in oem/user/justin.nix
-{ config, pkgs, lib, cosmicOverlay, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   ################################
-  # Desktop Environment (COSMIC 1.0)
+  # Desktop Environment (COSMIC)
   ################################
-  nixpkgs.overlays = [ cosmicOverlay ];
   nitrousOS.plugin.desktop.cosmic.enable = true;
 
   ################################
@@ -23,6 +22,6 @@
   ################################
   nitrousOS.plugin.dynamicGpu = {
     enable = true;
-    defaultMode = "auto";
+    defaultMode = "igpu-only";
   };
 }

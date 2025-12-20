@@ -143,20 +143,20 @@ let
     echo "[dynamic-gpu] Current mode: $MODE"
 
     case "$MODE" in
-      igpu-only)
-        ${gpuDisableScript}
-        exit 0
-        ;;
       dgpu-forced)
         ${gpuEnableScript}
         exit 0
         ;;
-      auto) ;;
-      *) MODE="${cfg.defaultMode}" ;;
+      igpu-only|auto|*)
+        # Both igpu-only and auto modes behave the same:
+        # - Enable dGPU only when external display or dock is connected
+        # - Otherwise disable dGPU for battery savings
+        ;;
     esac
 
     EXT=$(${externalMonitorDetectScript})
     if [ "$EXT" = "external-connected" ]; then
+      echo "[dynamic-gpu] External display detected, enabling dGPU"
       ${gpuEnableScript}
       exit 0
     fi
@@ -170,10 +170,12 @@ let
     fi
 
     if [ "$DOCKED" -eq 1 ]; then
+      echo "[dynamic-gpu] Dock detected, enabling dGPU"
       ${gpuEnableScript}
       exit 0
     fi
 
+    echo "[dynamic-gpu] No external display/dock, disabling dGPU"
     ${gpuDisableScript}
   '';
 
@@ -214,8 +216,8 @@ in
     enable = mkEnableOption "Dynamic hybrid GPU control";
     defaultMode = mkOption {
       type = types.enum [ "auto" "igpu-only" "dgpu-forced" ];
-      default = "auto";
-      description = "Default GPU mode";
+      default = "igpu-only";
+      description = "Default GPU mode (igpu-only and auto both enable dGPU only when external display/dock connected)";
     };
     disableMethod = mkOption {
       type = types.enum [ "auto" "pci-remove" "acpi-off" ];
@@ -235,6 +237,8 @@ in
     boot.extraModprobeConfig = ''
       options nvidia_drm modeset=0
     '';
+
+    boot.blacklistedKernelModules = [ "nouveau" ];
 
     hardware.graphics.enable = true;
 

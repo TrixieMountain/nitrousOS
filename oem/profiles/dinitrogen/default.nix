@@ -23,6 +23,6 @@
   ################################
   nitrousOS.plugin.dynamicGpu = {
     enable = true;
-    defaultMode = "igpu-only";
+    defaultMode = "auto";
   };
 }

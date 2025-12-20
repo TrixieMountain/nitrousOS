@@ -5,7 +5,7 @@
 {
   # Enable CUPS printing service
   services.printing = {
-    enable = true;
+    enable = lib.mkDefault true;
     drivers = [ pkgs.epson-escpr2 ];
   };
 

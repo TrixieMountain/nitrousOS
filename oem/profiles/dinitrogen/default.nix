@@ -1,13 +1,14 @@
 # oem/profiles/dinitrogen/default.nix
 # Full-featured desktop profile - system configuration
 # User definitions are in oem/user/justin.nix
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, cosmicOverlay, ... }:
 
 {
   ################################
-  # Desktop Environment (Pantheon)
+  # Desktop Environment (COSMIC 1.0)
   ################################
-  nitrousOS.plugin.desktop.pantheon.enable = true;
+  nixpkgs.overlays = [ cosmicOverlay ];
+  nitrousOS.plugin.desktop.cosmic.enable = true;
 
   ################################
   # Network settings

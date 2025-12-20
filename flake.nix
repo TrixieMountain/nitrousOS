@@ -4,12 +4,42 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, nixpkgs-unstable }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+      pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
+
+      # Overlay to use COSMIC 1.0 from nixpkgs-unstable
+      cosmicOverlay = final: prev: {
+        cosmic-applets = pkgs-unstable.cosmic-applets;
+        cosmic-applibrary = pkgs-unstable.cosmic-applibrary;
+        cosmic-bg = pkgs-unstable.cosmic-bg;
+        cosmic-comp = pkgs-unstable.cosmic-comp;
+        cosmic-edit = pkgs-unstable.cosmic-edit;
+        cosmic-files = pkgs-unstable.cosmic-files;
+        cosmic-greeter = pkgs-unstable.cosmic-greeter;
+        cosmic-icons = pkgs-unstable.cosmic-icons;
+        cosmic-idle = pkgs-unstable.cosmic-idle;
+        cosmic-launcher = pkgs-unstable.cosmic-launcher;
+        cosmic-notifications = pkgs-unstable.cosmic-notifications;
+        cosmic-osd = pkgs-unstable.cosmic-osd;
+        cosmic-panel = pkgs-unstable.cosmic-panel;
+        cosmic-randr = pkgs-unstable.cosmic-randr;
+        cosmic-screenshot = pkgs-unstable.cosmic-screenshot;
+        cosmic-session = pkgs-unstable.cosmic-session;
+        cosmic-settings = pkgs-unstable.cosmic-settings;
+        cosmic-settings-daemon = pkgs-unstable.cosmic-settings-daemon;
+        cosmic-store = pkgs-unstable.cosmic-store;
+        cosmic-term = pkgs-unstable.cosmic-term;
+        cosmic-wallpapers = pkgs-unstable.cosmic-wallpapers;
+        cosmic-workspaces-epoch = pkgs-unstable.cosmic-workspaces-epoch;
+        pop-icon-theme = pkgs-unstable.pop-icon-theme;
+        pop-launcher = pkgs-unstable.pop-launcher;
+      };
 
       # Helper to create a disk image from a NixOS configuration
       makeDiskImage = name: nixosConfig:
@@ -34,6 +64,7 @@
         # Dinitrogen - Full-featured desktop
         dinitrogen-vm = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = { inherit cosmicOverlay; };
           modules = [
             ./lib/system
             ./oem/profiles/dinitrogen
@@ -91,6 +122,7 @@
         # To use: sudo nixos-rebuild switch --flake .#justin-p14s
         justin-p14s = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = { inherit cosmicOverlay; };
           modules = [
             ./lib/system
             ./oem/profiles/dinitrogen

@@ -70,6 +70,26 @@ in {
           mullvad
           clamav
           tailscale
+          # Cryptography & key management
+          gnome-secrets        # Seahorse - GPG/SSH key manager
+          gnupg
+          pinentry-gnome3
+          openssl
+          age                  # Modern encryption tool
+          rage                 # Rust implementation of age
+          paperkey             # Backup GPG keys to paper
+          ccrypt               # File encryption utility
+          # Disk/volume encryption
+          veracrypt            # Encrypted containers (GUI)
+          tomb                 # Encrypted folders using LUKS
+          # Hardware security keys
+          yubikey-manager
+          yubikey-personalization
+          # Password auditing
+          hashcat              # GPU-based password cracker
+          john                 # John the Ripper
+          # Certificate tools
+          mkcert               # Local dev certificates
         ];
         description = "Security and privacy packages";
       };

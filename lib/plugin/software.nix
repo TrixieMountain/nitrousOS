@@ -5,6 +5,11 @@
 let
   cfg = config.nitrousOS.software;
 
+  # Browser-related security packages for native messaging integration
+  browserSecurityPackages = with pkgs; [
+    keepassxc  # Provides native messaging host for browser integration
+  ];
+
   # Packages that should NOT be auto-included in Pantheon app discovery
   pantheonSkip = [
     "elementary-screenshot-tool"   # deprecated alias
@@ -53,7 +58,7 @@ in {
       packages = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         default = with pkgs; [
-          firefox
+          # Firefox installed via programs.firefox module for native messaging
           chromium
           mullvad-browser
         ];
@@ -140,6 +145,23 @@ in {
       ++ (category cfg.communication)
       ++ (category cfg.dev)
       ++ (category cfg.pantheon);
+
+    # Firefox with native messaging support for KeePassXC integration
+    programs.firefox = lib.mkIf cfg.browsers.enable {
+      enable = true;
+      # Enable native messaging hosts (KeePassXC browser integration)
+      nativeMessagingHosts.packages = lib.mkIf cfg.security.enable browserSecurityPackages;
+      # Auto-install security extensions when security category is enabled
+      policies = lib.mkIf cfg.security.enable {
+        ExtensionSettings = {
+          # KeePassXC-Browser extension
+          "keepassxc-browser@keepassxc.org" = {
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/keepassxc-browser/latest.xpi";
+            installation_mode = "force_installed";
+          };
+        };
+      };
+    };
 
   };
 }

@@ -112,6 +112,25 @@ in {
       };
     };
 
+    religious = {
+      enable = lib.mkEnableOption "Religious study tools";
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        default = with pkgs; [
+          # GUI Bible study tools (SWORD-based)
+          bibletime              # Qt-based Bible study
+          xiphos                 # GTK Bible study
+          biblesync              # Shared navigation between Bible apps
+          # Terminal Bible tools
+          kjv                    # King James Version CLI
+          lukesmithxyz-bible-kjv # KJV + Apocrypha CLI
+          grb                    # Greek Bible (Septuagint, SBL, Apocrypha)
+          vul                    # Latin Vulgate CLI
+        ];
+        description = "Religious study packages";
+      };
+    };
+
     dev = {
       enable = lib.mkEnableOption "Development tools";
       programs.nix-ld.enable = true;
@@ -143,6 +162,7 @@ in {
       ++ (category cfg.browsers)
       ++ (category cfg.security)
       ++ (category cfg.communication)
+      ++ (category cfg.religious)
       ++ (category cfg.dev)
       ++ (category cfg.pantheon);
 

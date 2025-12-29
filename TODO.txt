@@ -1,0 +1,31 @@
+# nitrousOS TODO
+
+## Recently Completed
+- [x] Fix missing PATH exports in dynamic-gpu scripts
+- [x] Fix inconsistent ThinkPad model detection
+- [x] Add debug/verbose mode (DYNAMIC_GPU_DEBUG=1)
+- [x] Create lib/helpers/ with shared Nix functions
+- [x] Consolidate desktop plugins (5 files → 1)
+- [x] Fix shell script PATH issues in install and sword-download scripts
+- [x] Merge doc/ and docs/ directories
+- [x] Remove empty template directories (assets, i18n, data, themes, layouts)
+- [x] Fix cross-boundary import (printer config moved to flake.nix)
+- [x] Add architecture.md and module-reference.md documentation
+- [x] Update README with documentation links
+
+## Dynamic GPU Plugin
+- [ ] Test suspend/resume cycle after fixes
+- [ ] Consider adding more ACPI paths for other laptop vendors
+- [ ] Add status command to gpu-mode (show current state)
+
+## Future Improvements
+- [ ] Add more desktop environments (Hyprland, Sway)
+- [ ] Create automated tests for system builds
+- [ ] Add secrets management (sops-nix or agenix)
+- [ ] Improve installation script UX (progress bars, better error messages)
+- [ ] Add more hardware targets as examples
+
+## Documentation
+- [ ] Add troubleshooting guide for common issues
+- [ ] Add migration guide between system variants
+- [ ] Document how to add custom ACPI paths for GPU control

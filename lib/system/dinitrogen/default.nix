@@ -4,9 +4,6 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [
-    ../../../oem/hardware/printers.nix
-  ];
   config = lib.mkIf (config.nitrousOS.system == "dinitrogen") {
     # Core system components (all enabled by default)
     nitrousOS.core.boot.enable = true;

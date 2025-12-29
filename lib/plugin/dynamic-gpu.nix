@@ -10,6 +10,57 @@ let
   stateDir = "/var/lib/dynamic-gpu";
   modeFile = "${stateDir}/mode";
 
+  ##########################################################################
+  # Common Script (sourced by all others)
+  ##########################################################################
+  gpuCommonScript = pkgs.writeShellScript "gpu-common" ''
+    #!/bin/sh
+    export PATH="${pkgs.kmod}/bin:${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:$PATH"
+
+    # Debug mode: set DYNAMIC_GPU_DEBUG=1 to enable verbose logging
+    debug() {
+      [ "''${DYNAMIC_GPU_DEBUG:-0}" = "1" ] && echo "[dynamic-gpu:debug] $*" >&2
+    }
+
+    log() {
+      echo "[dynamic-gpu] $*"
+    }
+
+    # System detection
+    SYS_VENDOR=$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || echo "")
+    PRODUCT_NAME=$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "")
+    PRODUCT_VERSION=$(cat /sys/class/dmi/id/product_version 2>/dev/null || echo "")
+    SYS_INFO="$(printf "%s %s %s" "$SYS_VENDOR" "$PRODUCT_NAME" "$PRODUCT_VERSION")"
+
+    debug "System: $SYS_INFO"
+
+    # ThinkPad models that support ACPI GPU control
+    THINKPAD_MODELS="thinkpad|p14s|p1|t14|t15|t16|x1|x13|l14|l15|e14|e15|z13|z16"
+
+    is_thinkpad() {
+      printf "%s" "$SYS_INFO" | grep -qiE "lenovo" &&
+      printf "%s" "$SYS_INFO" | grep -qiE "$THINKPAD_MODELS"
+    }
+
+    # Dock detection (robust check)
+    is_docked() {
+      [ -d /sys/bus/thunderbolt/devices ] &&
+      [ -n "$(ls -A /sys/bus/thunderbolt/devices 2>/dev/null)" ]
+    }
+
+    # External display detection
+    has_external_display() {
+      for status in /sys/class/drm/*/status; do
+        name=$(basename "$(dirname "$status")")
+        case "$name" in *eDP*|*LVDS*|*DSI*) continue ;; esac
+        if [ "$(cat "$status" 2>/dev/null)" = "connected" ]; then
+          return 0
+        fi
+      done
+      return 1
+    }
+  '';
+
   nvidiaOffloadScript = pkgs.writeShellScriptBin "nvidia-offload" ''
     #!/usr/bin/env bash
     export __NV_PRIME_RENDER_OFFLOAD=1
@@ -23,39 +74,35 @@ let
   ##########################################################################
   gpuDisableScript = pkgs.writeShellScript "gpu-disable-core" ''
     #!/bin/sh
-    echo "[dynamic-gpu] Disabling dGPU..."
+    . ${gpuCommonScript}
+
+    log "Disabling dGPU..."
 
     METHOD_DEFAULT='${cfg.disableMethod}'
-    SYS_VENDOR=$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || echo "")
-    PRODUCT_NAME=$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "")
-    PRODUCT_VERSION=$(cat /sys/class/dmi/id/product_version 2>/dev/null || echo "")
-
-    SYS_INFO="$(printf "%s %s %s" "$SYS_VENDOR" "$PRODUCT_NAME" "$PRODUCT_VERSION")"
-
     METHOD="$METHOD_DEFAULT"
 
     if [ "$METHOD" = "auto" ]; then
-      if printf "%s" "$SYS_INFO" | grep -qiE "lenovo" &&
-         printf "%s" "$SYS_INFO" | grep -qiE "thinkpad|p14s|p1|t14|t15|t16|x1|x13|l14|l15|e14|e15|z13|z16"; then
-        echo "[dynamic-gpu] ThinkPad detected → using ACPI _OFF"
+      if is_thinkpad; then
+        debug "ThinkPad detected → using ACPI _OFF"
         METHOD="acpi-off"
       else
-        echo "[dynamic-gpu] Non-ThinkPad → using PCI remove"
+        debug "Non-ThinkPad → using PCI remove"
         METHOD="pci-remove"
       fi
     fi
 
-    echo "[dynamic-gpu] Disable method: $METHOD"
+    log "Disable method: $METHOD"
 
     # Unload modules
     for m in nvidia_drm nvidia_modeset nvidia_uvm nvidia amdgpu radeon; do
       if lsmod | grep -q "$m"; then
+        debug "Unloading module: $m"
         modprobe -r "$m" 2>/dev/null || true
       fi
     done
 
     if [ "$METHOD" = "acpi-off" ]; then
-      echo "[dynamic-gpu] Applying ACPI power-off..."
+      log "Applying ACPI power-off..."
       modprobe acpi_call 2>/dev/null || true
       if [ -e /proc/acpi/call ]; then
         for path in \
@@ -63,6 +110,7 @@ let
           '\_SB.PCI0.PEG0.PEGP._OFF' \
           '\_SB.PCI0.GFX0._OFF' \
           '\_SB.PEGP._OFF'; do
+          debug "Trying ACPI path: $path"
           echo "$path" > /proc/acpi/call 2>/dev/null || true
         done
       fi
@@ -73,6 +121,7 @@ let
       for dev in /sys/bus/pci/devices/*; do
         vendor=$(cat "$dev/vendor" 2>/dev/null || echo "")
         if [ "$vendor" = "0x10de" ] || [ "$vendor" = "0x1002" ]; then
+          debug "Removing PCI device: $(basename "$dev")"
           if [ -e "$dev/driver/unbind" ]; then
             echo "$(basename "$dev")" > "$dev/driver/unbind" 2>/dev/null || true
           fi
@@ -88,15 +137,12 @@ let
   ##########################################################################
   gpuEnableScript = pkgs.writeShellScript "gpu-enable-core" ''
     #!/bin/sh
-    echo "[dynamic-gpu] Enabling dGPU..."
+    . ${gpuCommonScript}
 
-    SYS_VENDOR=$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || echo "")
-    PRODUCT_NAME=$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "")
-    PRODUCT_VERSION=$(cat /sys/class/dmi/id/product_version 2>/dev/null || echo "")
-    SYS_INFO="$(printf "%s %s %s" "$SYS_VENDOR" "$PRODUCT_NAME" "$PRODUCT_VERSION")"
+    log "Enabling dGPU..."
 
-    if printf "%s" "$SYS_INFO" | grep -qiE "lenovo" &&
-       printf "%s" "$SYS_INFO" | grep -qiE "thinkpad|p14s"; then
+    if is_thinkpad; then
+      debug "ThinkPad detected → using ACPI _ON"
       modprobe acpi_call 2>/dev/null || true
       if [ -e /proc/acpi/call ]; then
         for path in \
@@ -104,13 +150,16 @@ let
           '\_SB.PCI0.PEG0.PEGP._ON' \
           '\_SB.PCI0.GFX0._ON' \
           '\_SB.PEGP._ON'; do
+          debug "Trying ACPI path: $path"
           echo "$path" > /proc/acpi/call 2>/dev/null || true
         done
       fi
     fi
 
+    debug "Rescanning PCI bus..."
     echo 1 > /sys/bus/pci/rescan 2>/dev/null || true
 
+    debug "Loading GPU modules..."
     modprobe amdgpu 2>/dev/null || true
     modprobe radeon 2>/dev/null || true
     modprobe nvidia 2>/dev/null || true
@@ -120,30 +169,18 @@ let
   '';
 
   ##########################################################################
-  # External Display Detect
-  ##########################################################################
-  externalMonitorDetectScript = pkgs.writeShellScript "dynamic-gpu-detect-external" ''
-    for status in /sys/class/drm/*/status; do
-      name=$(basename "$(dirname "$status")")
-      case "$name" in *eDP*|*LVDS*|*DSI*) continue ;; esac
-      if [ "$(cat "$status" 2>/dev/null)" = "connected" ]; then
-        echo "external-connected"
-        exit 0
-      fi
-    done
-    echo "external-disconnected"
-  '';
-
-  ##########################################################################
   # Mode Engine
   ##########################################################################
   dynamicGpuApplyScript = pkgs.writeShellScript "dynamic-gpu-apply" ''
     #!/bin/sh
+    . ${gpuCommonScript}
+
     MODE=$(cat "${modeFile}" 2>/dev/null || echo "${cfg.defaultMode}")
-    echo "[dynamic-gpu] Current mode: $MODE"
+    log "Current mode: $MODE"
 
     case "$MODE" in
       dgpu-forced)
+        debug "Mode is dgpu-forced, enabling dGPU"
         ${gpuEnableScript}
         exit 0
         ;;
@@ -151,31 +188,23 @@ let
         # Both igpu-only and auto modes behave the same:
         # - Enable dGPU only when external display or dock is connected
         # - Otherwise disable dGPU for battery savings
+        debug "Mode is $MODE, checking for external display/dock"
         ;;
     esac
 
-    EXT=$(${externalMonitorDetectScript})
-    if [ "$EXT" = "external-connected" ]; then
-      echo "[dynamic-gpu] External display detected, enabling dGPU"
+    if has_external_display; then
+      log "External display detected, enabling dGPU"
       ${gpuEnableScript}
       exit 0
     fi
 
-    # Dock detection via Thunderbolt
-    DOCKED=0
-    if ls /sys/bus/thunderbolt/devices 1>/dev/null 2>&1; then
-      if [ "$(ls /sys/bus/thunderbolt/devices)" != "" ]; then
-        DOCKED=1
-      fi
-    fi
-
-    if [ "$DOCKED" -eq 1 ]; then
-      echo "[dynamic-gpu] Dock detected, enabling dGPU"
+    if is_docked; then
+      log "Dock detected, enabling dGPU"
       ${gpuEnableScript}
       exit 0
     fi
 
-    echo "[dynamic-gpu] No external display/dock, disabling dGPU"
+    log "No external display/dock, disabling dGPU"
     ${gpuDisableScript}
   '';
 
@@ -183,6 +212,9 @@ let
   # CLI: gpu-mode
   ##########################################################################
   gpuModeScript = pkgs.writeShellScriptBin "gpu-mode" ''
+    #!/bin/sh
+    . ${gpuCommonScript}
+
     if [ $# -ne 1 ]; then
       echo "Usage: gpu-mode [auto|igpu|dgpu]"
       exit 1
@@ -197,6 +229,7 @@ let
 
     mkdir -p "${stateDir}"
     echo "$MODE" > "${modeFile}"
+    log "Set mode to: $MODE"
 
     ${dynamicGpuApplyScript}
   '';
@@ -234,9 +267,29 @@ in
 
     boot.extraModulePackages = [ config.boot.kernelPackages.acpi_call ];
 
+    # Suspend/resume hooks to properly handle dGPU state
+    # Disable dGPU before suspend to prevent freeze on resume
+    powerManagement.powerDownCommands = ''
+      echo "[dynamic-gpu] Pre-suspend: saving mode and disabling dGPU"
+      MODE=$(cat "${modeFile}" 2>/dev/null || echo "${cfg.defaultMode}")
+      echo "$MODE" > "${stateDir}/mode-pre-suspend"
+      ${gpuDisableScript}
+    '';
+
+    powerManagement.resumeCommands = ''
+      echo "[dynamic-gpu] Post-resume: restoring GPU state"
+      sleep 1
+      ${dynamicGpuApplyScript}
+    '';
+
     boot.extraModprobeConfig = ''
       options nvidia_drm modeset=0
     '';
+
+    # Enable deep sleep if available, helps with suspend reliability
+    boot.kernelParams = [
+      "nvidia.NVreg_PreserveVideoMemoryAllocations=0"  # Don't preserve VRAM on suspend (we disable GPU anyway)
+    ];
 
     boot.blacklistedKernelModules = [ "nouveau" ];
 

@@ -14,6 +14,9 @@
 
 set -euo pipefail
 
+# Ensure common tools are in PATH (especially in minimal NixOS installer environment)
+export PATH="/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH"
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'

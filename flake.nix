@@ -99,6 +99,7 @@
             ./oem/user
             ./oem/hardware/hardware-configuration.nix
             ./oem/hardware/nvidia-laptop-lenovo-p14s.nix
+            ./oem/hardware/printers.nix
             {
               nitrousOS.system = "dinitrogen";
               boot.initrd.luks.devices."luks-f91c7866-4b76-4443-b10f-4a0fe5689f16".device =

@@ -75,10 +75,12 @@ nitrousOS/
 
 See [doc/](doc/) for detailed documentation:
 
+- [Architecture](doc/architecture.md) - Project structure and module hierarchy
+- [Module Reference](doc/module-reference.md) - All `nitrousOS.*` options
 - [Getting Started](doc/getting-started.md)
-- [Targets](doc/targets.md)
-- [Installation](doc/installation.md)
 - [Configuration](doc/configuration.md)
+- [Installation](doc/installation.md)
+- [Targets](doc/targets.md)
 - [VM Builder](doc/vm-builder.md)
 
 ## Requirements

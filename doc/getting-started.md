@@ -84,6 +84,8 @@ Run `just help` for a complete list, or `just --list` for a quick reference.
 
 ## Next Steps
 
+- [Architecture](architecture.md) - Understand the project structure
+- [Module Reference](module-reference.md) - All configuration options
 - [Targets](targets.md) - Detailed target descriptions
 - [Configuration](configuration.md) - Customize your system
 - [Installation](installation.md) - Full installation guide

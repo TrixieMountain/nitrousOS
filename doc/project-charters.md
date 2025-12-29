@@ -1,5 +1,56 @@
 # nitrousOS Project Charters
 
+This document describes the major components and plugins in nitrousOS.
+
+---
+
+## Helpers Library (`lib/helpers/default.nix`)
+
+### Purpose
+Shared Nix functions used across modules to reduce duplication and ensure consistency.
+
+### Functions
+- `mkShellScript { name, deps, script }` - Create shell script with proper PATH and logging
+- `mkShellScriptBin { name, deps, script }` - Create executable script for PATH
+- `isSystem config systems` - Check if current system is in list
+- `mkSystemConfig config systems attrs` - Conditional config for specific systems
+
+### Usage
+```nix
+helpers = import ../../helpers { inherit lib pkgs; };
+
+myScript = helpers.mkShellScript {
+  name = "my-script";
+  deps = [ pkgs.curl pkgs.jq ];
+  script = ''
+    log "Starting..."
+    curl -s https://example.com | jq .
+  '';
+};
+```
+
+---
+
+## Desktop Plugins (`lib/plugin/desktop/default.nix`)
+
+### Purpose
+Consolidated desktop environment configuration. All DEs defined in one file using `lib.mkMerge`.
+
+### Supported Environments
+| Option | Display Manager | Notes |
+|--------|-----------------|-------|
+| `cosmic.enable` | cosmic-greeter | Rust-based, no Xserver |
+| `gnome.enable` | GDM | GTK-based |
+| `kde.enable` | SDDM | Plasma 6 |
+| `pantheon.enable` | LightDM | elementary OS style |
+
+### Usage
+```nix
+nitrousOS.plugin.desktop.cosmic.enable = true;
+```
+
+---
+
 ## Dynamic GPU Plugin (`lib/plugin/dynamic-gpu.nix`)
 
 ### Purpose

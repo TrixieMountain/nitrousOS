@@ -13,8 +13,10 @@ nitrousOS/
 │   │   ├── audio.nix   # PipeWire audio
 │   │   ├── services.nix # Base services
 │   │   └── nix.nix     # Nix settings
+│   ├── helpers/        # Shared Nix functions
+│   │   └── default.nix # mkShellScript, isSystem, etc.
 │   ├── plugin/         # Optional features
-│   │   ├── desktop/    # Desktop environments
+│   │   ├── desktop/    # Desktop environments (all in default.nix)
 │   │   ├── network/    # Network configuration
 │   │   ├── software.nix # Package categories
 │   │   └── dynamic-gpu.nix # Hybrid GPU control
@@ -27,6 +29,8 @@ nitrousOS/
     ├── user/           # User definitions (credentials, software)
     └── hardware/       # Machine-specific configs
 ```
+
+For detailed architecture information, see [architecture.md](architecture.md).
 
 ## System Variant
 
@@ -149,6 +153,9 @@ gpu-mode dgpu     # Force discrete GPU
 
 # Run application on discrete GPU
 nvidia-offload <command>
+
+# Enable debug logging
+DYNAMIC_GPU_DEBUG=1 gpu-mode auto
 ```
 
 ### Network Configuration
